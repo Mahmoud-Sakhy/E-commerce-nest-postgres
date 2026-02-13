@@ -1,4 +1,4 @@
-import { Category } from 'src/category/category.entity';
+import { Category } from '../category/category.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +11,7 @@ import {
 
 @Entity('products')
 export class Product {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ length: 200 })
@@ -23,6 +23,9 @@ export class Product {
   @Column({ nullable: true })
   image?: string;
 
+  @Column({ nullable: true })
+  imagePublicId?: string;
+
   @Column('text')
   description: string;
 
@@ -30,12 +33,20 @@ export class Product {
   price: number;
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  compareAtPrice: number; // السعر قبل الخصم
+  compareAtPrice: number;
 
   @Column('simple-array', { nullable: true })
   colors?: string[];
 
-  // العلاقة مع Category
+  @Column('simple-array', { nullable: true })
+  sizes?: string[];
+
+  @Column({ default: 0 })
+  stock: number;
+
+  @Column({ default: true })
+  isAvailable: boolean;
+
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'categoryId' })
   category: Category;
