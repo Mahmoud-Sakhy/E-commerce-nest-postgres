@@ -1,7 +1,10 @@
+import { Category } from 'src/category/category.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,6 +31,17 @@ export class Product {
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
   compareAtPrice: number; // السعر قبل الخصم
+
+  @Column('simple-array', { nullable: true })
+  colors?: string[];
+
+  // العلاقة مع Category
+  @ManyToOne(() => Category, (category) => category.products)
+  @JoinColumn({ name: 'categoryId' })
+  category: Category;
+
+  @Column({ nullable: true })
+  categoryId: string;
 
   @CreateDateColumn()
   createdAt: Date;
