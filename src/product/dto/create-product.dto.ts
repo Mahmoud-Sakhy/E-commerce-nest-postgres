@@ -1,49 +1,68 @@
-import { IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsArray,
+  IsUUID,
+  Min,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProductDto {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   @IsString()
   title: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   @IsString()
   slug: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  @IsOptional()
+  @IsString()
+  image?: string;
+
+  @IsOptional()
+  @IsString()
+  imagePublicId?: string;
+
   @IsString()
   description: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  @Type(() => Number)
   @IsNumber()
+  @Min(0)
   price: number;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   @IsOptional()
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  @Type(() => Number)
   @IsNumber()
+  @Min(0)
   compareAtPrice?: number;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   colors?: string[];
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   sizes?: string[];
 
   @IsOptional()
-  @IsString()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  stock?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isAvailable?: boolean;
+
+  @IsOptional()
+  @IsUUID()
   categoryId?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   brandId?: string;
-
-  @IsOptional()
-  @IsNumber()
-  stock?: number;
-
-  @IS_OPTIONAL()
-  @IsBoolean()
-  isAvailable?: boolean;
 }

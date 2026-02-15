@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { Product } from './product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductQueryDto } from './dto/product-query.dto';
+import { PaginatedProducts } from './types/product-query.type';
 
 @Injectable()
 export class ProductService {
@@ -17,14 +19,12 @@ export class ProductService {
     return this.productRepo.save(product);
   }
 
-  async findAll(query: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  async findAll(query: ProductQueryDto): Promise<PaginatedProducts> {
     const { page = 1, limit = 10, search, categoryId, brandId } = query;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Product> = {};
 
     if (search) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       where.title = ILike(`%${search}%`);
     }
 
@@ -47,7 +47,7 @@ export class ProductService {
     return {
       data,
       total,
-      page: +page,
+      page,
       lastPage: Math.ceil(total / limit),
     };
   }
