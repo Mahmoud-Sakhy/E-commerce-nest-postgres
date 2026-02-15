@@ -43,3 +43,8 @@ export class ProductController {
   }
 }
 // GET /products?page=1&limit=10&search=shirt&categoryId=xxx&brandId=xxx
+// GET /products
+// ?sort=price
+// &order=asc
+// &minPrice=100
+// &maxPrice=500

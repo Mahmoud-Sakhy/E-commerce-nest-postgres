@@ -1,6 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import {
+  Between,
+  FindOptionsWhere,
+  ILike,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { Product } from './product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -20,14 +27,26 @@ export class ProductService {
   }
 
   async findAll(query: ProductQueryDto): Promise<PaginatedProducts> {
-    const { page = 1, limit = 10, search, categoryId, brandId } = query;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      categoryId,
+      brandId,
+      sort = 'createdAt',
+      order = 'desc',
+      minPrice,
+      maxPrice,
+    } = query;
 
     const where: FindOptionsWhere<Product> = {};
 
+    /* ===== Search ===== */
     if (search) {
       where.title = ILike(`%${search}%`);
     }
 
+    /* ===== Filters ===== */
     if (categoryId) {
       where.categoryId = categoryId;
     }
@@ -36,12 +55,26 @@ export class ProductService {
       where.brandId = brandId;
     }
 
+    /* ===== Price Range ===== */
+    if (minPrice !== undefined && maxPrice !== undefined) {
+      where.price = Between(minPrice, maxPrice);
+    } else if (minPrice !== undefined) {
+      where.price = MoreThanOrEqual(minPrice);
+    } else if (maxPrice !== undefined) {
+      where.price = LessThanOrEqual(maxPrice);
+    }
+
+    /* ===== Sorting ===== */
+    const orderBy: Record<string, 'ASC' | 'DESC'> = {
+      [sort]: order.toUpperCase() as 'ASC' | 'DESC',
+    };
+
     const [data, total] = await this.productRepo.findAndCount({
       where,
       relations: ['category', 'brand'],
       skip: (page - 1) * limit,
       take: limit,
-      order: { createdAt: 'DESC' },
+      order: orderBy,
     });
 
     return {
