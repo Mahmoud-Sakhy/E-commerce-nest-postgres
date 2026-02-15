@@ -1,3 +1,4 @@
+import { Brand } from 'src/brand/brand.entity';
 import { Category } from '../category/category.entity';
 import {
   Column,
@@ -5,9 +6,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CartItem } from 'src/cart/cart-item.entity';
+import { OrderItem } from 'src/order/order-item.entity';
+import { Wishlist } from 'src/wishlist/wishlist.entity';
 
 @Entity('products')
 export class Product {
@@ -53,6 +58,24 @@ export class Product {
 
   @Column({ nullable: true })
   categoryId: string;
+
+  @ManyToOne(() => Brand, (brand) => brand.products, { nullable: true })
+  @JoinColumn({ name: 'brandId' })
+  brand: Brand;
+
+  @Column({ nullable: true })
+  brandId?: string;
+
+  @OneToMany(() => CartItem, (item) => item.product)
+  cartItems: CartItem[];
+
+  /* ================= Orders ================= */
+  @OneToMany(() => OrderItem, (item) => item.product)
+  orderItems: OrderItem[];
+
+  /* ================= Wishlist ================= */
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.product)
+  wishlists: Wishlist[];
 
   @CreateDateColumn()
   createdAt: Date;
