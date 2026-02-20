@@ -7,9 +7,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './create-category.dto';
 import { UpdateCategoryDto } from './update-category.dto';
-import { CategoryService } from './category.service';
 
 @Controller('categories')
 export class CategoryController {
@@ -40,9 +40,3 @@ export class CategoryController {
     return this.categoryService.remove(id);
   }
 }
-
-// POST    /categories
-// GET     /categories
-// GET     /categories/:id
-// PUT     /categories/:id
-// DELETE  /categories/:id
